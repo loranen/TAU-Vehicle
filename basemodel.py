@@ -3,6 +3,7 @@ from tensorflow import keras
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Dropout, Flatten
 from tensorflow.keras.layers import Conv2D, MaxPooling2D
+from tensorflow.keras.layers import GlobalAveragePooling2D
 
 def init_basemodel(modelname):
 
@@ -19,13 +20,13 @@ def init_basemodel(modelname):
 	return base_model
 
 
-def construct_and_compile(base_model):
+def construct_and_compile_MobileNetV2(base_model):
 	in_tensor = base_model.inputs[0]
 	out_tensor = base_model.outputs[0]
 
-	out_tensor = Flatten()(out_tensor)
-	out_tensor = Dense(100, activation='relu')(out_tensor)
-	out_tensor = Dense(17, activation='relu')(out_tensor)
+	out_tensor = GlobalAveragePooling2D()(out_tensor)
+	out_tensor = Dense(128, activation='relu')(out_tensor)
+	out_tensor = Dense(17, activation='softmax')(out_tensor)
 
 	# Define the full model by the endpoints.
 	model = Model(inputs = [in_tensor], outputs = [out_tensor])
@@ -35,32 +36,56 @@ def construct_and_compile(base_model):
 	# Compile the model for execution. Losses and optimizers
 	# can be anything here, since we don’t train the model.
 	#model.compile(loss = "categorical_crossentropy", optimizer = 'sgd')
-
-	model.compile(loss=keras.losses.categorical_crossentropy,
-				  optimizer='sgd',
-				  metrics=['accuracy'])
+	model.compile(loss=tf.keras.losses.categorical_crossentropy, optimizer=tf.keras.optimizers.Adadelta(), metrics=['accuracy'])
 
 	return model
 
-def construct_and_compile_2(base_model):
-	for layer in base_model.layers:
-	    layer.trainable = False
+def construct_and_compile_Xception(base_model):
+    
+	# freeze_layers(base_model, -10, 0)
+
+	in_tensor = base_model.inputs[0]
+	out_tensor = base_model.outputs[0]
 	
-	input_tensor = base_model.input
-	# build top
-	x = base_model.output
-	x = Dropout(.5)(x)
-	x = Dense(1000, activation='relu')(x)
-	x = Dense(17, activation='softmax')(x)
+	out_tensor = Flatten()(out_tensor)
+	out_tensor = Dense(128, activation='relu')(out_tensor)
 	
-	model = Model(inputs=input_tensor, outputs=x)
-	model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+	out_tensor = Dense(17, activation='softmax')(out_tensor)
+
+	# Define the full model by the endpoints.
+	model = Model(inputs = [in_tensor], outputs = [out_tensor])
+
+	#tf.keras.utils.plot_model(model)
+	
+	# Compile the model for execution. Losses and optimizers
+	# can be anything here, since we don’t train the model.
+	#model.compile(loss = "categorical_crossentropy", optimizer = 'sgd')
+	model.compile(loss=tf.keras.losses.categorical_crossentropy, optimizer=tf.keras.optimizers.Adadelta(), metrics=['accuracy'])
+	return model
+
+def construct_and_compile_InceptionV3(base_model):
+    
+	in_tensor = base_model.inputs[0]
+	out_tensor = base_model.outputs[0]
+
+	out_tensor = GlobalAveragePooling2D()(out_tensor)
+	out_tensor = Dense(128, activation='relu')(out_tensor)
+	out_tensor = Dense(17, activation='softmax')(out_tensor)
+
+	# Define the full model by the endpoints.
+	model = Model(inputs = [in_tensor], outputs = [out_tensor])
+
+	#tf.keras.utils.plot_model(model)
+	
+	# Compile the model for execution. Losses and optimizers
+	# can be anything here, since we don’t train the model.
+	#model.compile(loss = "categorical_crossentropy", optimizer = 'sgd')
+	model.compile(loss=tf.keras.losses.categorical_crossentropy, optimizer=tf.keras.optimizers.Adadelta(), metrics=['accuracy'])
 
 	return model
 
-def freeze_layers(model, from_layer, to_layer):
+def freeze_layers(model, from_layer, to_layer, freeze = False):
 	# Freeze layers in model
 	for layer in model.layers[from_layer:to_layer]:
-		layer.trainable = False
+		layer.trainable = freeze
 	return model
-

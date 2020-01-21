@@ -58,7 +58,7 @@ def classify_testdata(model, batchsize, test_dir):
 	submission_output.output_submission(prediction_table, test_generator.filenames, class_names)
 
 def evaluate_base_models(path):
-	models = ["MobileNet", "MobileNetV2", "InceptionV3", "xception"]
+	models = ["MobileNet", "MobileNetV2", "InceptionV3", "Xception"]
 	
 	for base in models:
 		base_model = basemodel.init_basemodel_param(base)
@@ -89,16 +89,20 @@ def draw_accuracy(history):
 
 if __name__ == "__main__":
 	
-	#split_dataset_into_test_and_train_sets(r'.\\all_data\\train\\', r'.\\training\\', r'.\\validation\\', 0.2)
-	#name = "MobileNet"
-	#base_model = basemodel.init_basemodel(name)
-	#model = basemodel.construct_and_compile(base_model)
-	#path=r'.\\'
 
+	name = "InceptionV3"
 
-	#trained_model, history = network_training.train_model(path, model, 10, 12, name)
-	#draw_accuracy(history)
+	base_model = basemodel.init_basemodel(name)
+	
+	model = basemodel.construct_and_compile_InceptionV3(base_model)
+	# model = load_model(r'C:\Users\Leevi\Documents\GitHub\TAU-Vehicle\01_20_2020_14_07_43_Xception.h5')
+	
+	model.summary()
+	path = r'C:\Users\Leevi\Documents\TAU_vehicle\TAU_train_data_split'
+
+	trained_model, history = network_training.train_model(path, model, 30, 50, name)
+	draw_accuracy(history)
 
 	#model = load_model("12_04_2019_08_42_12_Xception_082.h5")
 
-	#classify_testdata(model, 5, r'.\\test')
+	# classify_testdata(model, 5, r'.\\test')

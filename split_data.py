@@ -60,13 +60,13 @@ def split_dataset_into_test_and_train_sets(all_data_dir, training_data_dir, test
 if __name__ == '__main__':
 
     # Set basedir here. Original files are expected to be in basedir/originals
-    basedir = ""
+    basedir = r"C:\Users\Leevi\Documents\TAU_vehicle"
     if basedir == "":
         print("No base directory set")
     else:
-        originals = basedir + r'\originals'
-        training = basedir + r'\training'
-        test = basedir + r'\test'
+        originals = basedir + r'\train'
+        training = basedir + r'vehicle_data\training'
+        test = basedir + r'vehicle_data\test'
 
         split_dataset_into_test_and_train_sets(originals, training, test, 0.2)
 

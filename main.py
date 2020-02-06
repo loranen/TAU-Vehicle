@@ -95,7 +95,7 @@ if __name__ == "__main__":
 	base_model = basemodel.init_basemodel(name)
 	
 	model = basemodel.construct_and_compile_InceptionV3(base_model)
-	# model = load_model(r'C:\Users\Leevi\Documents\GitHub\TAU-Vehicle\01_20_2020_14_07_43_Xception.h5')
+	# model = load_model(r'\01_20_2020_14_07_43_Xception.h5')
 	
 	model.summary()
 	path = r'C:\Users\Leevi\Documents\TAU_vehicle\TAU_train_data_split'
